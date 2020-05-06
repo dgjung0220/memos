@@ -75,3 +75,9 @@ cv2.destroyAllWindows()
  print("calibration data is written into: {}".format(destnation))
 ```
 
+​	opencv 내장함수인 calibrateCamera 를 이용한다. 이 함수는 캘리브레이션 결과(ret), 카메라 행렬(mtx), 왜곡 계수(dist), 회전과 이동벡터(rvecs, tvecs) 등을 반환한다. 자세한 함수 설명은 https://docs.opencv.org/2.4/modules/calib3d/doc/camera_calibration_and_3d_reconstruction.html 참고. 코드에서는 캘리브레이션의 결과인 행령과 왜곡 계수를 pickle로 저장한다.
+
+
+
+
+
