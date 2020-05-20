@@ -9,7 +9,10 @@ https://www.kaggle.com/daehungwak/guide-kor-dg
 1. 데이터셋 확인
 
    - 데이터 구성 확인
+
    - 데이터 칼럼 오류 수정이나 null check 등 확인하여 향후 이용시 수정
+
+     
 
 2. 탐색적 데이터 분석 (EDA, Exploratory Data Analysis)
 
@@ -93,10 +96,25 @@ df_train.dtypes
 # Cabin           object
 # Embarked        object
 # dtype: object
+```
 
+```python
 # pandas describe, 각 feature 들의 통계치
 df_train.describe()
 ```
+
+|       | PassengerId | Survived   | Pclass     | Age        | SibSp      | Parch      | Fare       |
+| :---- | :---------- | :--------- | :--------- | :--------- | :--------- | :--------- | ---------- |
+| count | 891.000000  | 891.000000 | 891.000000 | 714.000000 | 891.000000 | 891.000000 | 891.000000 |
+| mean  | 446.000000  | 0.383838   | 2.308642   | 29.699118  | 0.523008   | 0.381594   | 32.204208  |
+| std   | 257.353842  | 0.486592   | 0.836071   | 14.526497  | 1.102743   | 0.806057   | 49.693429  |
+| min   | 1.000000    | 0.000000   | 1.000000   | 0.420000   | 0.000000   | 0.000000   | 0.000000   |
+| 25%   | 223.500000  | 0.000000   | 2.000000   | 20.125000  | 0.000000   | 0.000000   | 7.910400   |
+| 50%   | 446.000000  | 0.000000   | 3.000000   | 28.000000  | 0.000000   | 0.000000   | 14.454200  |
+| 75%   | 668.500000  | 1.000000   | 3.000000   | 38.000000  | 1.000000   | 0.000000   | 31.000000  |
+| max   | 891.000000  | 1.000000   | 3.000000   | 80.000000  | 8.000000   | 6.000000   | 512.329200 |
+
+
 
 ##### 결측치 확인
 
@@ -157,7 +175,7 @@ plt.show()
 
 ​	시각화 라이브러리는 matplotlib, seaborn, plotly 등이 있음.
 
-
+<img src="../../upload/image-20200516105425269.png" alt="image-20200516105425269" style="zoom:50%;" />
 
 ##### 2.1 Pclass
 
@@ -169,31 +187,72 @@ plt.show()
 ```python
 # pclass 그룹 별 데이터 카운트
 df_train[['Pclass', 'Survived']].groupby(['Pclass'], as_index=True).count()
+```
 
+|        | Survived |
+| -----: | -------: |
+| Pclass |          |
+|      1 |      216 |
+|      2 |      184 |
+|      3 |      491 |
+
+```python
 # pclass 그룹별 생존자 수 합
 df_train[['Pclass', 'Survived']].groupby(['Pclass'], as_index=True).sum()
+```
 
+|        | Survived |
+| -----: | -------: |
+| Pclass |          |
+|      1 |      136 |
+|      2 |       87 |
+|      3 |      119 |
+
+```python
 # crosstab을 사용하여 위의 작업 수행
 pd.crosstab(df_train['Pclass'], df_train['Survived'], margins=True)
+```
 
+| Survived |    0 |    1 |  All |
+| -------: | ---: | ---: | ---: |
+|   Pclass |      |      |      |
+|        1 |   80 |  136 |  216 |
+|        2 |   97 |   87 |  184 |
+|        3 |  372 |  119 |  491 |
+|      All |  549 |  342 |  891 |
+
+```python
 # 생존률 산출 : mean
 df_train[['Pclass', 'Survived']].groupby(['Pclass'], as_index=True).mean()
+```
 
+| Survived |          |
+| -------: | -------: |
+|   Pclass |          |
+|        1 | 0.629630 |
+|        2 | 0.472826 |
+|        3 | 0.242363 |
+
+```python
 # 생존률 시각화
 df_train[['Pclass', 'Survived']].groupby(['Pclass'], as_index=True).mean().plot.bar()
 ```
+
+<img src="../../upload/image-20200516113833105.png" alt="image-20200516113833105" style="zoom:80%;" />
 
 ##### 2.2 Sex
 
 ```python
 f, ax = plt.subplots(1, 2, figsize=(18,8))
 df_train[['Sex', 'Survived']].groupby(['Sex'], as_index=True).mean().plot().bar(ax=ax[0])
-ax[0].set_title('Survived vs Sex')
+ax[0].set_title('Survived by Sex')
 
 sns.countplot('Sex', hue='Survived', data=df_train, ax=ax[1])
-ax[1].set_title('Sex : Survived vs Dead')
+ax[1].set_title('Sex : Survived by Dead')
 plt.show()
 ```
+
+<img src="../../upload/image-20200516114140769.png" alt="image-20200516114140769" style="zoom:67%;" />
 
 ##### 2.3 Sex & Pclass
 
@@ -201,13 +260,15 @@ plt.show()
 sns.factorplot('Pclass', 'Survived', hue='Sex', data=df_train, size=6, aspect=1.5)
 ```
 
+<img src="../../upload/image-20200516114237583.png" alt="image-20200516114237583" style="zoom:67%;" />
+
+
 ##### 2.4 Age
 
 ```python
 print('제일 나이 많은 탑승객 : {:.1f} Years'.format(df_train['Age'].max()))
 print('제일 어린 탑승객 : {:.1f} Years'.format(df_train['Age'].min()))
 print('탑승객 평균 나이 : {:.1f} Years'.format(df_train['Age'].mean()))
-
 # output : 제일 나이 많은 탑승객 : 80.0 Years
 # 제일 어린 탑승객 : 0.4 Years
 # 탑승객 평균 나이 : 29.7 Years
@@ -221,20 +282,24 @@ plt.legend(['Survived == 1', 'Survived == 0'])
 plt.show()
 ```
 
+<img src="../../upload/image-20200516142556661.png" alt="image-20200516142556661" style="zoom:67%;" />
+
+
 ```python
 plt.figure(figsize=(8,6))
 df_train['Age'][df_train['Pclass'] == 1].plot(kind='kde')
 df_train['Age'][df_train['Pclass'] == 2].plot(kind='kde')
 df_train['Age'][df_train['Pclass'] == 3].plot(kind='kde')
-
 plt.xlabel('Age')
 plt.title('Age distribution within classes')
 plt.legend(['1st class', '2nd class', '3rd class'])
 ```
 
+<img src="../../upload/image-20200516141352352.png" alt="image-20200516141352352" style="zoom:67%;" />
 
 
-나이대와 따른 생존 확률, 누적확률을 활용한 시각화
+
+**나이대와 따른 생존 확률, 누적확률을 활용한 시각화**
 
 ```python
 cummulate_survival_ratio = []
@@ -250,6 +315,8 @@ plt.xlabel('Range of Age(0~x)')
 plt.show()
 ```
 
+<img src="../../upload/image-20200516142655789.png" alt="image-20200516142655789" style="zoom:67%;" />
+
 
 
 ##### 2.5 Embarked
@@ -262,9 +329,11 @@ f, ax = plt.subplots(1,1, figsize=(7,7))
 df_train[['Embarked'],['Survived']].groupby(['Embarked'], as_index=True).mean().sort_values(by='Survived', ascending=False).plot.bar(ax=ax)
 ```
 
+<img src="../../upload/image-20200516142759832.png" alt="image-20200516142759832" style="zoom:67%;" />
 
 
-피쳐들간의 상관관계
+
+**피쳐들간의 상관관계 살펴보기**
 
 ```python
 f,ax=plt.subplots(2, 2, figsize=(20,15))
@@ -280,22 +349,19 @@ plt.subplots_adjust(wspace=0.2, hspace=0.5)
 plt.show()
 ```
 
-
+<img src="../../upload/image-20200516143415367.png" alt="image-20200516143415367" style="zoom: 67%;" />
 
 ##### 2.6 Family - SibSp + Parch
-
 SibSp 와 Parch 를 합쳐 함께 탑승한 가족의 수가 만든다. (FamilySize)
 
 ```python
 df_train['FamilySize'] = df_train['SibSp'] + df_train['Parch'] + 1
 df_test['FamilySize'] = df_test['SibSp'] + df_test['Parch'] + 1
-```
 
-```python
 print('Maximum size of family', df_train['FamilySize'].max())
 print('Maximum size of family', df_train['FamilySize'].min())
 
-# Output : Maximum size of family 11
+# Maximum size of family 11
 # Maximum size of family 1
 ```
 
@@ -314,9 +380,13 @@ plt.subplots_adjust(wspace=0.2, hspace=0.5)
 plt.show()
 ```
 
+![image-20200516150645231](../../upload/image-20200516150645231.png)
+
 
 
 ##### 2.7 Fare
+
+탑승 요금은 연속적인 데이터이므로 histogram을 그려 살펴본다.
 
 ```python
 fig, ax = plt.subplots(1,1, figsize=(8,8))
@@ -324,12 +394,55 @@ g = sns.distplot(df_train['Fare'], color='b', label='Skewness : {:.2f}'.format(d
 g = g.legend(loc='best')
 ```
 
+<img src="../../upload/image-20200516150721643.png" alt="image-20200516150721643" style="zoom:67%;" />
+
 ```python
 # NaN 값에 mean() 값 입력
 df_test.loc[df_test.Fare.isnull(), 'Fare'] = df_test['Fare'].mean()
 
+# 데이터 정제 (우편향 고치기, feature engineering)
+df_train['Fare'] = df.train['Fare'].map(lambda i : np.log(i) if i > 0 else 0)
+df_test['Fare'] = df.train['Fare'].map(lambda i : np.log(i) if i > 0 else 0)
 
+fig, ax = plt.subplots(1, 1, figsize=(8, 8))
+g = sns.distplot(df_train['Fare'], color='b', label='Skewness : {:.2f}'.format(df_train['Fare'].skew()), ax=ax)
+g = g.legend(loc='best')
 ```
+
+<img src="../../upload/image-20200516151716969.png" alt="image-20200516151716969" style="zoom:67%;" />
+
+##### 2.8 Cabin
+
+이 feature에는 NaN이 대략 80%이므로, 유의미한 정보를 얻기 힘들다. 그러므로 모델에 포함시키지 않는다.
+
+```python
+# Null 비율 계산
+df_train['Cabin'].isnull().sum() / df_train.shape[0]
+# output : 0.7710437710437711
+```
+
+
+
+#### 3. 특성 공학 (Feature Engineering)
+
+##### 3.1  Fill Null
+
+Fill 'null' in Age using title
+
+```python
+df_train['Age'].isnull().sum()	# 177
+```
+
+Age에는 null data가 177개나 있다. 이를 채울 수 있는 방법은 여러가지가 있을 것인데, 여기서는 title + statistics 를 사용한다. 영어에는 Miss, Mr 등과 같은 title이 존재하고, 각 탑승객의 이름에는 이런 title이 존재할 것이다. 이 점을 이용해보자
+
+```python
+df_train['Initial'] = df_train.Name.str.extract('([A-Za-z]+)\.')
+df_test['Initial'] = df_train.Name.str.extract('([A-Za-z]+)\.')
+```
+
+Crosstab 을 이용하여 들어간 'Initial' column의 상태를 확인
+
+![image-20200516154847058](../../upload/image-20200516154847058.png)
 
 
 
