@@ -15,7 +15,7 @@
   - [DIY 로봇팔 (따따) Study](https://github.com/ai-robotics-kr/diy_study)
   - [Cloud Computing Study](https://github.com/ai-robotics-kr/cloud_study)
   - [NLP Study](https://github.com/ai-robotics-kr/nlp_study)
-  - **stella 스터디 공유 자료**
+- **stella 스터디 공유 자료**
     - [Understanding Features](https://hello-stella.tistory.com/18)
     - [Harris Corner Detection](https://hello-stella.tistory.com/19)
     - [Shi-Tomasi Corner Detector & Good Features to Track](https://hello-stella.tistory.com/20)
