@@ -6,7 +6,6 @@
 - [SLAM 관련 논문 서베이](https://goodgodgd.github.io/ian-flow/archivers/vode-survey)
 - [입문 Visual SLAM](https://adioshun.gitbooks.io/deep-slam/SLAM-kr-Tutorial/)
 - [Robotics:Perception; coursera 강의](https://www.coursera.org/learn/robotics-perception?fbclid=IwAR0Cfrw4JavQo38i6LvDj_gK1CJ_0xMtkdPxUhh51zEaFDbmBrWTeQ4zBOQ)
-- 
 - **AI Robotics 스터디 공유 자료**
   - [AI Robotics Python Study](https://github.com/ai-robotics-kr/python_study)
   - [AI Robotics PyTorch Study](https://github.com/ai-robotics-kr/pytorch_study)
