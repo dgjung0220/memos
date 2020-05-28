@@ -1,6 +1,12 @@
 ### SLAM 기술 관련 내용
 
 - [SLAM 설명 동영상](https://www.youtube.com/watch?v=eoVguSwoGbY&feature=youtu.be&fbclid=IwAR2iX-xazDPr6rjV5xHWky5O8JSnJdkUCiBgHAJiTk3bZk4iFeCKqzWcQg4)
+- [VSLAM Introduction](https://www.youtube.com/watch?v=s0W4kW-ZVAg)
+- [SLAM의 종류와 특징](https://rocknz.tistory.com/entry/SLAM%EC%9D%98-%EC%A2%85%EB%A5%98%EC%99%80-%ED%8A%B9%EC%A7%95)
+- [SLAM 관련 논문 서베이](https://goodgodgd.github.io/ian-flow/archivers/vode-survey)
+- [입문 Visual SLAM](https://adioshun.gitbooks.io/deep-slam/SLAM-kr-Tutorial/)
+- [Robotics:Perception; coursera 강의](https://www.coursera.org/learn/robotics-perception?fbclid=IwAR0Cfrw4JavQo38i6LvDj_gK1CJ_0xMtkdPxUhh51zEaFDbmBrWTeQ4zBOQ)
+- 
 - **AI Robotics 스터디 공유 자료**
   - [AI Robotics Python Study](https://github.com/ai-robotics-kr/python_study)
   - [AI Robotics PyTorch Study](https://github.com/ai-robotics-kr/pytorch_study)
