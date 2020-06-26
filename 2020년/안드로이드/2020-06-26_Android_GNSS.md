@@ -44,6 +44,6 @@
 
 
 
-https://mobtransnum.ifsttar.fr/fileadmin/contributeurs/Mobilite-Transitions-Numeriques/Documents/Seminaire_25_mai_2018/PF_MobTransNum_Seminaire_25_mai_2018_GNSS_Android.pdf
-
+- https://mobtransnum.ifsttar.fr/fileadmin/contributeurs/Mobilite-Transitions-Numeriques/Documents/Seminaire_25_mai_2018/PF_MobTransNum_Seminaire_25_mai_2018_GNSS_Android.pdf
+- https://gnss-compare.readthedocs.io/en/latest/user_manual/android_gnssMeasurements.html
 
