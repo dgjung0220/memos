@@ -13,15 +13,28 @@ $ npm install orientjs --save
 
 
 
+### Handlebar View Engine
+
+```shell
+$ npm install express-handlebars --save
+$ npm install moment --save
+```
+
+
+
+
+
 ### 프로젝트 초기 설정 (Source Base)
 
 ```javascript
 var express = require('express');
 var app = express();
 var route = require('./route.js');
+
 var bodyParser = require('body-parser');
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
+
 app.use(express.static('semantic'));
 app.locals.pretty = true;
 app.set('view engine', 'pug');

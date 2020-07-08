@@ -1,35 +1,34 @@
 ## Android GNSS
 
-* 안드로이드 GPS 원시데이터의 의사거리를 이용한 측위 정확도 비교
-* 주 이용 클래스 : Location, GNSSMeasurement, GNSSNavigation, GNSSStatus, NMEA
+>참고
+>
+>- https://www.gsa.europa.eu/system/files/reports/gnss_raw_measurement_web_0.pdf
+>- GPS Navstar, Global Positioning System, User's Overview
 
- 이러한 GNSS 원시데이터의 필요성이 높아짐에 따라 구글은 안드로이드 N부터 **의사거리(pseudorange), 의사거리 변화율(pseudorange rate), 항법 메시지(navigation message), 반송파 누적거리(accumulated delta range), 반송파측정값(carrier), 하드웨어 시계값(H/W clock)의 제공을 지원**한다. 그러나 안드로이드 N 운영체제를 사용하는 모든 장치에서 원시데이터를 제공하는 것은 아니며 현재 2017년 8월 현재 GNSS 원시데이터를 지원하는 목록은 표 1과 같다. P는 의사거리, N은 항법메시지, A는 반송파 누적 거리, H는 하드웨어 시계를 의미, G는 GPS, R은 GLONASS, E 는 Galileo, C는 Beidou를 의미한다
+주 이용 클래스 : **Location, GNSSMeasurement, GNSSNavigation, GNSSStatus, NMEA**
 
+​	GNSS 원시데이터의 필요성이 높아짐에 따라 구글은 안드로이드 N부터 **의사거리(pseudorange), 의사거리 변화율(pseudorange rate), 항법 메시지(navigation message), 반송파 누적거리(accumulated delta range), 반송파측정값(carrier), 하드웨어 시계값(H/W clock)의 제공을 지원**한다.
 
-
-
-
-
+- GNSSClock
+  - Receiver time (used to compute the pseudorange)
+  - Clock bias
+- GNSS Navigation Message (위성 궤도 정보)
+  - Navigation Message bits (all the constellations)
+  - Navigation message status (오차 보정을 위한 계수)
+- GNSS Measurement
+  - Received Satellite Time (used to compute the pseudorange)
+  
+  - Code
+  
+  - Carrier phase
+  
+    
 
 ### Pseudorange,의사거리 계산
 
-의사거리는 일반적으로 GPS에서 사용하는 방식으로, 위성과 지구에 존재하는 GPS 수신기 사이의 대략적인 거리를 의미한다.
+​	의사거리는 일반적으로 GPS에서 사용하는 방식으로, 위성과 지구에 존재하는 GPS 수신기 사이의 대략적인 거리를 의미한다. 
 
 (1) Psedorange = (RxTime - TxTime) x SpeedofLight
-
-계산을 위해 원시 출력값의 **TimeNanos, FullBiasNanos, BiasNanos, TimeOffsetNanos, ReceivedSvTimeNanos** 이용
-
-| Name                | 클래스          | 함수                                      | 설명                                                         |
-| ------------------- | --------------- | ----------------------------------------- | ------------------------------------------------------------ |
-| TimeNanos           | GnssClock       | public **long** getTimeNanos ()           | Gets the GNSS receiver internal hardware clock value in nanoseconds. |
-| FullBiasNanos       | GnssClock       | public **long** getFullBiasNanos ()       | Gets the difference between hardware clock (`getTimeNanos()`) inside GPS receiver and the true GPS time since 0000Z, January 6, 1980, in nanoseconds. |
-| BiasNanos           | GnssClock       | public **double** getBiasNanos ()         | Gets the clock's sub-nanosecond bias.                        |
-| TimeOffsetNanos     | GnssMeasurement | public **double** getTimeOffsetNanos ()   | Gets the time offset at which the measurement was taken in nanoseconds. |
-| ReceivedSvTimeNanos | GnssMeasurement | public **long** getReceivedSvTimeNanos () | Gets the received GNSS satellite time, at the measurement time, in nanoseconds. |
-
-
-
-#### 수신 시간 계산
 
 (2) weekNumber = (FullBiasNanos x 10^-9) / WeekSecond
 
@@ -47,15 +46,63 @@
 
 (7) Rseudorange = PseudorangeSecond x SpeedOfLight(299,792,458 m/s)
 
-
+| Name                | 클래스          | 함수                                      | 설명                                                         |
+| ------------------- | --------------- | ----------------------------------------- | ------------------------------------------------------------ |
+| TimeNanos           | GnssClock       | public **long** getTimeNanos ()           | Gets the GNSS receiver internal hardware clock value in nanoseconds. |
+| FullBiasNanos       | GnssClock       | public **long** getFullBiasNanos ()       | Gets the difference between hardware clock (`getTimeNanos()`) inside GPS receiver and the true GPS time since 0000Z, January 6, 1980, in nanoseconds. |
+| BiasNanos           | GnssClock       | public **double** getBiasNanos ()         | Gets the clock's sub-nanosecond bias.                        |
+| TimeOffsetNanos     | GnssMeasurement | public **double** getTimeOffsetNanos ()   | Gets the time offset at which the measurement was taken in nanoseconds. |
+| ReceivedSvTimeNanos | GnssMeasurement | public **long** getReceivedSvTimeNanos () | Gets the received GNSS satellite time, at the measurement time, in nanoseconds. |
 
 ```java
-DateTime GetFromGps(int weeknumber, double seconds)
-{
-    DateTime datum = new DateTime(1980,1,6,0,0,0);
-    DateTime week = datum.AddDays(weeknumber * 7);
-    DateTime time = week.AddSeconds(seconds);
-    return time;
+double SPEED_OF_LIGHT = 299792458.0;
+long NUMBER_NANO_SECONDS_PER_WEEK = 604800000000000L;
+long WEEKSEC = 604800;
+```
+
+```java
+gpsTime = TimeNanos - (FullBiasNanos + BiasNanos);
+tRxGPS = gpsTime + TimeOffsetNanos;
+weekNumberNanos = Math.floor((-1. * FullBiasNanos) / Constants.NUMBER_NANO_SECONDS_PER_WEEK)*constants.NUMBER_NANO_SECONDS_PER_WEEK;
+
+pseudorange = (tRxGPS - weekNumberNanos - ReceivedSvTimeNanos) / 1.0E9 * Constants.SPEED_OF_LIGHT;
+```
+
+PVT 가 usable 한지 state 이용하여 확인
+
+| Name  | 클래스          | 함수                      | 설명                                                         |
+| ----- | --------------- | ------------------------- | ------------------------------------------------------------ |
+| State | GnssMeasurement | public **int** getState() | Gets per-satellite sync state. It represents the current sync state for the associated satellite. |
+
+```java
+int measState = measurement.getState();
+```
+
+```
+STATE_CODE_LOCK, STATE_BIT_SYNC, STATE_SUBFRAME_SYNC, STATE_TOW_DECODED, STATE_MSEC_AMBIGUOUS, STATE_SYMBOL_SYNC, STATE_GLO_STRING_SYNC, STATE_GLO_TOD_DECODED, STATE_BDS_D2_BIT_SYNC, STATE_BDS_D2_SUBFRAME_SYNC, STATE_GAL_E1BC_CODE_LOCK, STATE_GAL_E1C_2ND_CODE_LOCK, STATE_GAL_E1B_PAGE_SYNC, STATE_SBAS_SYNC, STATE_TOW_KNOWN, STATE_GLO_TOD_KNOWN, and STATE_2ND_CODE_LOCK
+```
+
+```java
+boolean codeLock = (measState & GnssMeasurement.STATE_CODE_LOCK) > 0;	// code lock
+boolean towDecoded = (measState & GnssMeasurement.STATE_TOW_DECODED) > 0;	// time-of-week decoded
+```
+
+TOW Uncertainty :
+
+| Name              | 클래스          | 함수                                                 | 설명                                                         |
+| ----------------- | --------------- | ---------------------------------------------------- | ------------------------------------------------------------ |
+| SvTimeUncertainty | GnssMeasurement | public **long** getReceivedSvTimeUncertaintyNanos () | Gets per-satellite sync state. It represents the current sync state for the associated satellite. |
+
+```java
+private static final int MAXTOWUNCNS = 50;
+boolean towUncertainty = measurement.getReceivedSvTimeUncertaintyNanos() < MAXTOWUNCNS;
+```
+
+​	Once the channel is able to consistently maintain correlation between its replica PRN code and the incoming PRN code, it will notify the data processor it has achieved "code lock"
+
+```java
+if (codeLock && towDecided && towUncertainty && pseudorange < 1e9) {
+    // 사용 가능한 상태
 }
 ```
 
@@ -81,25 +128,21 @@ NMEA 라고 주로 불리는 NMEA 0183은 시간, 위치, 방위 등의 정보�
 
 Android 6.0 이전
 
+- android.gsm.location
 - Straightforward location
   - PVT (position, velocity, time)
 
 Android 7.0 이후
 
-- Raw measurement 방법 추가
+- android.location
+- Raw measurement
   - Reference Times
   - Pseudorange Generation
   - Navigation Message
 
 
 
----
-
-참고
-
-- 13.전리층변화에따른GPS신호특성분석연구.pdf
-- https://www.gsa.europa.eu/system/files/reports/gnss_raw_measurement_web_0.pdf
-- https://github.com/TheGalfins/GNSS_Compare
+- 
 
 ---
 
