@@ -17,9 +17,7 @@
   - Navigation message status (오차 보정을 위한 계수)
 - GNSS Measurement
   - Received Satellite Time (used to compute the pseudorange)
-  
   - Code
-  
   - Carrier phase
   
     
