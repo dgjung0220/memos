@@ -105,7 +105,25 @@ if (codeLock && towDecided && towUncertainty && pseudorange < 1e9) {
     // 사용 가능한 상태
 }
 ```
+계산에 필요한 파라미터 목록
 
+```
+,,,,DriftUncertaintyNanosPerSecond,HardwareClockDiscontinuityCount, Svid,TimeOffsetNanos,State,ReceivedSvTimeNanos,ReceivedSvTimeUncertaintyNanos,Cn0DbHz,PseudorangeRateMetersPerSecond,PseudorangeRateUncertaintyMetersPerSecond,AccumulatedDeltaRangeState,AccumulatedDeltaRangeMeters,AccumulatedDeltaRangeUncertaintyMeters,CarrierFrequencyHz,CarrierCycles,CarrierPhase,CarrierPhaseUncertainty,MultipathIndicator,SnrInDb,ConstellationType
+```
+
+| Name                           | 클래스      | 함수                                         | 설명                                                         |
+| ------------------------------ | ----------- | -------------------------------------------- | ------------------------------------------------------------ |
+| ElapsedRealtimeMillis          | SystemClock | public static **long** elapsedRealtime ()    | Returns milliseconds since boot, including time spent in sleep. |
+| TimeNanos                      | GnssClock   | public **long** getTimeNanos ()              | Gets the GNSS receiver internal hardware clock value in nanoseconds. |
+| LeapSecond                     | GnssClock   | public **int** getLeapSecond ()              | Gets the leap second associated with the clock's time.       |
+| TimeUncertaintyNanos           | GnssClock   | public **double** getTimeUncertaintyNanos () | Gets the clock's time Uncertainty (1-Sigma) in nanoseconds. The value is only available if `hasTimeUncertaintyNanos()` is `true`. |
+| FullBiasNanos                  | GnssClock   | public **long** getFullBiasNanos ()          | Gets the difference between hardware clock (`getTimeNanos()`) inside GPS receiver and the true GPS time since 0000Z, January 6, 1980, in nanoseconds. |
+| BiasNanos                      | GnssClock   | public **double** getBiasNanos ()            | Gets the clock's sub-nanosecond bias.                        |
+| BiasUncertaintyNanos           | GnssClock   | public **double** getBiasUncertaintyNanos () | Gets the clock's Bias Uncertainty (1-Sigma) in nanoseconds. The value is only available if `hasBiasUncertaintyNanos()` is `true`. |
+| DriftNanosPerSecond            | GnssClock   | public **double** getDriftNanosPerSecond ()  | Gets the clock's Drift in nanoseconds per second.            |
+| DriftUncertaintyNanosPerSecond |             |                                              |                                                              |
+
+- UtcTimeNanos = TimeNanos - (FullBiasNanos + BiasNanos) - LeapSecond * 1,000,000,000
 
 
 
