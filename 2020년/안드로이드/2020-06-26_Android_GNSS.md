@@ -10,17 +10,26 @@
 ​	GNSS 원시데이터의 필요성이 높아짐에 따라 구글은 안드로이드 N부터 **의사거리(pseudorange), 의사거리 변화율(pseudorange rate), 항법 메시지(navigation message), 반송파 누적거리(accumulated delta range), 반송파측정값(carrier), 하드웨어 시계값(H/W clock)의 제공을 지원**한다.
 
 - GNSSClock
+
   - Receiver time (used to compute the pseudorange)
   - Clock bias
+
 - GNSS Navigation Message (위성 궤도 정보)
+
   - Navigation Message bits (all the constellations)
   - Navigation message status (오차 보정을 위한 계수)
+
 - GNSS Measurement
+
   - Received Satellite Time (used to compute the pseudorange)
+
   - Code
+
   - Carrier phase
-  
+
     
+
+---
 
 ### Pseudorange,의사거리 계산
 
@@ -103,27 +112,57 @@ if (codeLock && towDecided && towUncertainty && pseudorange < 1e9) {
     // 사용 가능한 상태
 }
 ```
-계산에 필요한 파라미터 목록
 
-```
-,,,,DriftUncertaintyNanosPerSecond,HardwareClockDiscontinuityCount, Svid,TimeOffsetNanos,State,ReceivedSvTimeNanos,ReceivedSvTimeUncertaintyNanos,Cn0DbHz,PseudorangeRateMetersPerSecond,PseudorangeRateUncertaintyMetersPerSecond,AccumulatedDeltaRangeState,AccumulatedDeltaRangeMeters,AccumulatedDeltaRangeUncertaintyMeters,CarrierFrequencyHz,CarrierCycles,CarrierPhase,CarrierPhaseUncertainty,MultipathIndicator,SnrInDb,ConstellationType
-```
+---
 
-| Name                           | 클래스      | 함수                                         | 설명                                                         |
-| ------------------------------ | ----------- | -------------------------------------------- | ------------------------------------------------------------ |
-| ElapsedRealtimeMillis          | SystemClock | public static **long** elapsedRealtime ()    | Returns milliseconds since boot, including time spent in sleep. |
-| TimeNanos                      | GnssClock   | public **long** getTimeNanos ()              | Gets the GNSS receiver internal hardware clock value in nanoseconds. |
-| LeapSecond                     | GnssClock   | public **int** getLeapSecond ()              | Gets the leap second associated with the clock's time.       |
-| TimeUncertaintyNanos           | GnssClock   | public **double** getTimeUncertaintyNanos () | Gets the clock's time Uncertainty (1-Sigma) in nanoseconds. The value is only available if `hasTimeUncertaintyNanos()` is `true`. |
-| FullBiasNanos                  | GnssClock   | public **long** getFullBiasNanos ()          | Gets the difference between hardware clock (`getTimeNanos()`) inside GPS receiver and the true GPS time since 0000Z, January 6, 1980, in nanoseconds. |
-| BiasNanos                      | GnssClock   | public **double** getBiasNanos ()            | Gets the clock's sub-nanosecond bias.                        |
-| BiasUncertaintyNanos           | GnssClock   | public **double** getBiasUncertaintyNanos () | Gets the clock's Bias Uncertainty (1-Sigma) in nanoseconds. The value is only available if `hasBiasUncertaintyNanos()` is `true`. |
-| DriftNanosPerSecond            | GnssClock   | public **double** getDriftNanosPerSecond ()  | Gets the clock's Drift in nanoseconds per second.            |
-| DriftUncertaintyNanosPerSecond |             |                                              |                                                              |
+
+
+### 계산에 필요한 파라미터 목록
+
+|      | Name                                      | 클래스          | 함수                                                         | 설명                                                         |
+| ---- | ----------------------------------------- | --------------- | ------------------------------------------------------------ | ------------------------------------------------------------ |
+| 1    | ElapsedRealtimeMillis                     | SystemClock     | public static **long** elapsedRealtime ()                    | Returns milliseconds since boot, including time spent in sleep. |
+| 2    | TimeNanos                                 | GnssClock       | public **long** getTimeNanos ()                              | Gets the GNSS receiver internal hardware clock value in nanoseconds. |
+| 3    | LeapSecond                                | GnssClock       | public **int** getLeapSecond ()                              | Gets the leap second associated with the clock's time.       |
+| 4    | TimeUncertaintyNanos                      | GnssClock       | public **double** getTimeUncertaintyNanos ()                 | Gets the clock's time Uncertainty (1-Sigma) in nanoseconds. The value is only available if `hasTimeUncertaintyNanos()` is `true`. |
+| 5    | FullBiasNanos                             | GnssClock       | public **long** getFullBiasNanos ()                          | Gets the difference between hardware clock (`getTimeNanos()`) inside GPS receiver and the true GPS time since 0000Z, January 6, 1980, in nanoseconds. |
+| 6    | BiasNanos                                 | GnssClock       | public **double** getBiasNanos ()                            | Gets the clock's sub-nanosecond bias.                        |
+| 7    | BiasUncertaintyNanos                      | GnssClock       | public **double** getBiasUncertaintyNanos ()                 | Gets the clock's Bias Uncertainty (1-Sigma) in nanoseconds. The value is only available if `hasBiasUncertaintyNanos()` is `true`. |
+| 8    | DriftNanosPerSecond                       | GnssClock       | public **double** getDriftNanosPerSecond ()                  | Gets the clock's Drift in nanoseconds per second.            |
+| 9    | DriftUncertaintyNanosPerSecond            | GnssClock       | public **double** getDriftUncertaintyNanosPerSecond ()       | Gets the clock's Drift Uncertainty (1-Sigma) in nanoseconds per second. The value is only available if `hasDriftUncertaintyNanosPerSecond()` is `true`. |
+| 10   | HardwareClockDiscontinuityCount           | GnssClock       | public int getHardwareClockDiscontinuityCount ()             | Gets count of hardware clock discontinuities.                |
+| 11   | TimeOffsetNanos                           | GnssMeasurement | public **double** getTimeOffsetNanos ()                      | Gets the time offset at which the measurement was taken in nanoseconds. |
+| 12   | State                                     | GnssMeasurement | public **int** getState()                                    | Gets per-satellite sync state. It represents the current sync state for the associated satellite. |
+| 13   | ReceivedSvTimeNanos                       | GnssMeasurement | public **long** getReceivedSvTimeNanos ()                    | Gets the received GNSS satellite time, at the measurement time, in nanoseconds. |
+| 14   | ReceivedSvTimeUncertaintyNanos            | GnssMeasurement | public **long** getReceivedSvTimeUncertaintyNanos ()         | Gets the error estimate (1-sigma) for the received GNSS time, in nanoseconds. |
+| 15   | Cn0DbHz                                   | GnssMeasurement | public **double** getCn0DbHz ()                              | Gets the Carrier-to-noise density in dB-Hz.                  |
+| 16   | PseudorangeRateMetersPerSecond            | GnssMeasurement | public **double** getPseudorangeRateMetersPerSecond ()       | Gets the Pseudorange rate at the timestamp in m/s.           |
+| 17   | PseudorangeRateUncertaintyMetersPerSecond | GnssMeasurement | public **double** getPseudorangeRateUncertaintyMetersPerSecond () | Gets the pseudorange's rate uncertainty (1-Sigma) in m/s.    |
+| 18   | AccumulatedDeltaRangeState                | GnssMeasurement | public **int** getAccumulatedDeltaRangeState ()              | Gets 'Accumulated Delta Range' state.                        |
+| 19   | AccumulatedDeltaRangeMeters               | GnssMeasurement | public **double** getAccumulatedDeltaRangeMeters ()          | Gets the accumulated delta range since the last channel reset, in meters. |
+| 20   | AccumulatedDeltaRangeUncertaintyMeters    | GnssMeasurement | public **double** getAccumulatedDeltaRangeUncertaintyMeters () | Gets the accumulated delta range's uncertainty (1-Sigma) in meters. |
+| 21   | CarrierFrequencyHz                        | GnssMeasurement | public **float** getCarrierFrequencyHz ()                    | Gets the carrier frequency of the tracked signal.            |
+| 22   | CarrierCycles                             | -               | **deprecated in API level 28**                               | -                                                            |
+| 23   | CarrierPhase                              | GnssMeasurement | public **double** getCarrierPhase()                          | Gets the RF phase detected by the receiver.                  |
+| 24   | CarrierPhaseUncertainty                   | -               | **deprecated in API level 28**                               | -                                                            |
+| 25   | MultipathIndicator                        | GnssMeasurement | public **int** getMultipathIndicator ()                      | Gets a value indicating the 'multipath' state of the event.  |
+| 26   | SnrInDb                                   | GnssMeasurement | public **double** getSnrInDb ()                              | Gets the (post-correlation & integration) Signal-to-Noise ratio (SNR) in dB. |
+| 27   | ConstellationType                         | GnssStatus      | public **int** getConstellationType (int satelliteIndex)     | Retrieves the constellation type of the satellite at the specified index. |
 
 - UtcTimeNanos = TimeNanos - (FullBiasNanos + BiasNanos) - LeapSecond * 1,000,000,000
+- ConstellationType
 
+```shell
+CONSTELLATION_UNKNOWN, CONSTELLATION_GPS, CONSTELLATION_SBAS, CONSTELLATION_GLONASS, CONSTELLATION_QZSS, CONSTELLATION_BEIDOU, CONSTELLATION_GALILEO, or CONSTELLATION_IRNSS
+```
 
+- accumulated delta range = -k * carrier phase    (where k is a constant)
+
+- pseudorange rate = -k * doppler shift   (where k is a constant)
+
+  
+
+---
 
 
 ### NMEA
@@ -151,18 +190,18 @@ Android 6.0 이전
 Android 7.0 이후
 
 - android.location
+
 - Raw measurement
+
   - Reference Times
+
   - Pseudorange Generation
+
   - Navigation Message
 
-
-
-- 
+    
 
 ---
-
-
 
 ### GNSS Measurement 목록 (2o개)
 
