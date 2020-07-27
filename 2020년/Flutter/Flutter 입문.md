@@ -11,7 +11,11 @@
 ### 설치
 
 1. [Flutter Download](https://flutter.dev/docs/get-started/install/windows)
+
+   ``git clone https://github.com/flutter/flutter.git -b stable``
+
 2. 환경변수에 path 설정 (flutter/bin)
+
 3. flutter doctor로 설치 확인
 
 
